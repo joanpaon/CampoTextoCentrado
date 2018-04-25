@@ -102,7 +102,7 @@ public class GUI extends JFrame {
         cargarColores();
     }
 
-    // Inicialización Anterior
+    // Inicialización Posterior
     private void initAfter() {
         // Establecer Favicon
         UtilesSwing.establecerFavicon(this, prp.getProperty(PRP_FAVICON, DEF_FAVICON));
