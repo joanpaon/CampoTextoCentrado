@@ -51,13 +51,15 @@ public final class GUI extends JFrame {
     public static final String DEF_FORM_BACKGROUND_RESOURCE = "img/background.jpg";
     public static final String DEF_FORM_FONT_RESOURCE = "fonts/default_font.ttf";
 
-    // Referencias
-    private Properties prp;
-    private JPanel pnlPpal;
-    private JTextField txfColor;
-
     // Colores
-    private final ArrayList<LabeledColor> colores = new ArrayList<>();
+    private final ArrayList<LabeledColor> COLORES = new ArrayList<>();
+
+    // Referencias
+    private final Properties prp;
+    
+    // Componentes
+    private JTextField txfColor;
+    private JPanel pnlPpal;
 
     // Constructor
     public GUI(Properties prp) {
@@ -111,7 +113,7 @@ public final class GUI extends JFrame {
                 PRP_LOOK_AND_FEEL_PROFILE, DEF_LOOK_AND_FEEL_PROFILE));
 
         // Cargar colores
-        LabeledColor.cargarColores(prp, colores);
+        LabeledColor.cargarColores(prp, COLORES);
     }
 
     // Inicialización Posterior
@@ -130,7 +132,7 @@ public final class GUI extends JFrame {
         String color = txfActual.getText().trim().toUpperCase();
 
         // Obtener Color
-        LabeledColor lc = LabeledColor.buscarColor(colores, color);
+        LabeledColor lc = LabeledColor.buscarColor(COLORES, color);
 
         // Cambiar Color Panel
         pnlPpal.setBackground(lc);
