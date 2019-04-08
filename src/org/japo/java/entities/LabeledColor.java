@@ -16,27 +16,62 @@
 package org.japo.java.entities;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Properties;
+import org.japo.java.libraries.UtilesCSV;
+import org.japo.java.libraries.UtilesValidacion;
 
 /**
  *
  * @author José A. Pacheco Ondoño - joanpaon@gmail.com
  */
-public class LabeledColor extends Color implements Comparable<LabeledColor> {
+public final class LabeledColor extends Color {
+
+    // Posiciones de Colores
+    public static final int POS_NAME = 0;
+    public static final int POS_RED = 1;
+    public static final int POS_GREEN = 2;
+    public static final int POS_BLUE = 3;
+    public static final int POS_ALPHA = 4;
+
+    // Expresiones Regulares Validación
+    public static final String REG_COLOR_NAME = "[a-zA-Z_]+";
+
+    // Propiedades Entidad
+    public static final String PRP_NUMERO_COLORES = "numero_colores";
+
+    // Valores por Defecto
+    public static final String DEF_COLOR_NAME = "COLOR_EXTRA";
+    public static final int DEF_COLOR_COMP_RED = 40;
+    public static final int DEF_COLOR_COMP_GREEN = 140;
+    public static final int DEF_COLOR_COMP_BLUE = 240;
+    public static final int DEF_COLOR_COMP_ALPHA = 255;
+    public static final String DEF_NUMERO_COLORES = "0";
 
     // Campos
     private String name;
 
+    // Constructor Predeterminado
+    public LabeledColor() {
+        super(
+                DEF_COLOR_COMP_RED,
+                DEF_COLOR_COMP_GREEN,
+                DEF_COLOR_COMP_BLUE,
+                DEF_COLOR_COMP_ALPHA);
+        this.name = DEF_COLOR_NAME;
+    }
+
     // Constructor Parametrizado
     public LabeledColor(String name, int r, int g, int b, int a) {
-        // Instanciar Color
+        // Instanciar Color Estándar
         super(r, g, b, a);
 
-        if (name != null && name.trim().length() > 0) {
+        // Valida nombre
+        if (UtilesValidacion.validar(name, REG_COLOR_NAME)) {
             this.name = name.trim().toUpperCase();
         } else {
-            this.name = "SIN_NOMBRE";
+            this.name = DEF_COLOR_NAME;
         }
-
     }
 
     public String getName() {
@@ -44,13 +79,57 @@ public class LabeledColor extends Color implements Comparable<LabeledColor> {
     }
 
     public void setName(String name) {
-        if (name != null && name.trim().length() > 0) {
+        if (UtilesValidacion.validar(name, REG_COLOR_NAME)) {
             this.name = name.trim().toUpperCase();
         }
     }
 
-    @Override
-    public int compareTo(LabeledColor lc) {
-        return name.compareTo(lc.getName());
+    // Propiedades > Lista de Colores
+    public static final void cargarColores(
+            Properties prp, ArrayList<LabeledColor> colores) {
+        try {
+            // Número de Colores Disponibles
+            int numColores = Integer.parseInt(prp.getProperty(
+                    PRP_NUMERO_COLORES, DEF_NUMERO_COLORES));
+
+            // Carga los colores
+            for (int i = 0; i < numColores; i++) {
+                // Carga Propiedad Actual
+                String prpAct = prp.getProperty(String.format("color%02d", i + 1));
+
+                // Segrega Campos 
+                String[] cmpAct = UtilesCSV.convertir(prpAct);
+
+                // Obtiene Componentes
+                String nAct = cmpAct[LabeledColor.POS_NAME].toUpperCase();
+                int rAct = Integer.parseInt(cmpAct[LabeledColor.POS_RED]);
+                int gAct = Integer.parseInt(cmpAct[LabeledColor.POS_GREEN]);
+                int bAct = Integer.parseInt(cmpAct[LabeledColor.POS_BLUE]);
+                int aAct = Integer.parseInt(cmpAct[LabeledColor.POS_ALPHA]);
+
+                // Instancia y añade color
+                colores.add(new LabeledColor(nAct, rAct, gAct, bAct, aAct));
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("ERROR: No se han cargado los colores");
+        } finally {
+            // Color Mínimo
+            colores.add(new LabeledColor());
+        }
+    }
+
+    // Nombre Color >> Color
+    public static final LabeledColor buscarColor(
+            ArrayList<LabeledColor> listaColores, String nombreColor) {
+        LabeledColor lc = null;
+
+        // Proceso de búsqueda
+        for (LabeledColor colorActual : listaColores) {
+            if (colorActual.getName().equals(nombreColor)) {
+                lc = colorActual;
+            }
+        }
+
+        return lc;
     }
 }

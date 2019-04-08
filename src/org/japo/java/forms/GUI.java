@@ -31,21 +31,26 @@ import org.japo.java.libraries.UtilesSwing;
  *
  * @author José A. Pacheco Ondoño - joanpaon@gmail.com
  */
-public class GUI extends JFrame {
+public final class GUI extends JFrame {
 
     // Propiedades App
-    public static final String PRP_LOOK_AND_FEEL = "look_and_feel";
-    public static final String PRP_FAVICON = "favicon";
-    public static final String PRP_NUMERO_COLORES = "numero_colores";
-    public static final String PRP_FUENTE = "fuente";
-
+    public static final String PRP_LOOK_AND_FEEL_PROFILE = "form_look_and_feel_profile";
+    public static final String PRP_FAVICON_RESOURCE = "form_favicon_resource";
+    public static final String PRP_FORM_TITLE = "form_title";
+    public static final String PRP_FORM_HEIGHT = "form_height";
+    public static final String PRP_FORM_WIDTH = "form_width";
+    public static final String PRP_FORM_BACKGROUND_RESOURCE = "form_background_resource";
+    public static final String PRP_FORM_FONT_RESOURCE = "form_font_resource";
 
     // Valores por Defecto
-    public static final String DEF_LOOK_AND_FEEL = UtilesSwing.LNF_NIMBUS;
-    public static final String DEF_FAVICON = "img/favicon.png";
-    public static final String DEF_NUMERO_COLORES = "0";
-    public static final String DEF_FUENTE = "fonts/IndieFlower.ttf";
-    
+    public static final String DEF_LOOK_AND_FEEL_PROFILE = UtilesSwing.LNF_WINDOWS_PROFILE;
+    public static final String DEF_FAVICON_RESOURCE = "img/favicon.png";
+    public static final String DEF_FORM_TITLE = "Swing Manual App";
+    public static final int DEF_FORM_HEIGHT = 300;
+    public static final int DEF_FORM_WIDTH = 500;
+    public static final String DEF_FORM_BACKGROUND_RESOURCE = "img/background.jpg";
+    public static final String DEF_FORM_FONT_RESOURCE = "fonts/default_font.ttf";
+
     // Referencias
     private Properties prp;
     private JPanel pnlPpal;
@@ -56,8 +61,11 @@ public class GUI extends JFrame {
 
     // Constructor
     public GUI(Properties prp) {
+        // Conectar Referencia
+        this.prp = prp;
+
         // Inicialización Anterior
-        initBefore(prp);
+        initBefore();
 
         // Creación Interfaz
         initComponents();
@@ -68,11 +76,11 @@ public class GUI extends JFrame {
 
     // Construcción del IGU
     private void initComponents() {
-        // Campo de Texto
+        // Otros componentes
         txfColor = new JTextField();
-        txfColor.setFont(UtilesSwing.cargarFuente(
-                prp.getProperty(PRP_FUENTE, DEF_FUENTE)).
-                deriveFont(Font.BOLD, 30f));
+        txfColor.setFont(UtilesSwing.importarFuenteRecurso(
+                prp.getProperty(PRP_FORM_FONT_RESOURCE, DEF_FORM_FONT_RESOURCE)).
+                deriveFont(Font.BOLD, 40f));
         txfColor.setColumns(10);
         txfColor.setHorizontalAlignment(JTextField.CENTER);
         txfColor.addActionListener(new AEM(this));
@@ -83,31 +91,37 @@ public class GUI extends JFrame {
 
         // Ventana principal
         setContentPane(pnlPpal);
-        setTitle("Swing Manual #05");
+        setTitle(prp.getProperty(PRP_FORM_TITLE, DEF_FORM_TITLE));
+        try {
+            int height = Integer.parseInt(prp.getProperty(PRP_FORM_HEIGHT));
+            int width = Integer.parseInt(prp.getProperty(PRP_FORM_WIDTH));
+            setSize(width, height);
+        } catch (NumberFormatException e) {
+            setSize(DEF_FORM_WIDTH, DEF_FORM_HEIGHT);
+        }
         setResizable(false);
-        setSize(500, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     // Inicialización Anterior    
-    private void initBefore(Properties prp) {
-        // Memorizar Referencia
-        this.prp = prp;
-
+    private void initBefore() {
         // Establecer LnF
-        UtilesSwing.establecerLnF(prp.getProperty(PRP_LOOK_AND_FEEL, DEF_LOOK_AND_FEEL));
+        UtilesSwing.establecerLnFProfile(prp.getProperty(
+                PRP_LOOK_AND_FEEL_PROFILE, DEF_LOOK_AND_FEEL_PROFILE));
 
         // Cargar colores
-        cargarColores();
+        LabeledColor.cargarColores(prp, colores);
     }
 
     // Inicialización Posterior
     private void initAfter() {
         // Establecer Favicon
-        UtilesSwing.establecerFavicon(this, prp.getProperty(PRP_FAVICON, DEF_FAVICON));
+        UtilesSwing.establecerFavicon(this, prp.getProperty(
+                PRP_FAVICON_RESOURCE, DEF_FAVICON_RESOURCE));
     }
 
+    // Pinta el Panel Principal con el color escrito
     public void procesarTexto(ActionEvent e) {
         // Generador del evento
         JTextField txfActual = (JTextField) e.getSource();
@@ -116,65 +130,9 @@ public class GUI extends JFrame {
         String color = txfActual.getText().trim().toUpperCase();
 
         // Obtener Color
-        LabeledColor lc = buscarColor(colores, color);
-        
+        LabeledColor lc = LabeledColor.buscarColor(colores, color);
+
         // Cambiar Color Panel
         pnlPpal.setBackground(lc);
-    }
-
-    private void cargarColores() {
-        // Posiciones de Colores
-        final int POS_NAME = 0;
-        final int POS_RED = 1;
-        final int POS_GREEN = 2;
-        final int POS_BLUE = 3;
-        final int POS_ALPHA = 4;
-        
-        // Proceso de carga
-        try {
-            // Número de Colores Disponibles
-            int numColores = Integer.parseInt(prp.getProperty(PRP_NUMERO_COLORES, DEF_NUMERO_COLORES));
-
-            // Carga los colores
-            for (int i = 0; i < numColores; i++) {
-                // Carga Propiedad Actual
-                String prpAct = prp.getProperty(String.format("color%02d", i + 1));
-
-                // Segrega Campos 
-                String[] cmpAct = prpAct.split("\\s*,\\s*");
-
-                // Obtiene Componentes
-                String nAct = cmpAct[POS_NAME].toUpperCase();
-                int rAct = Integer.parseInt(cmpAct[POS_RED]);
-                int gAct = Integer.parseInt(cmpAct[POS_GREEN]);
-                int bAct = Integer.parseInt(cmpAct[POS_BLUE]);
-                int aAct = Integer.parseInt(cmpAct[POS_ALPHA]);
-
-                // Instancia y añade color
-                colores.add(new LabeledColor(nAct, rAct, gAct, bAct, aAct));
-            }
-        } catch (NumberFormatException e) {
-            // Mensaje de error
-            System.out.println("ERROR: No se han cargado los colores");
-        } finally {
-            // Color Extra
-            colores.add(new LabeledColor("COLOR_EXTRA", 152, 251, 152, 255));
-        }
-    }
-    
-    public static final LabeledColor buscarColor(
-            ArrayList<LabeledColor> listaColores, String nombreColor) {
-        // Referencia Búsqueda
-        LabeledColor lc = null;
-        
-        // Proceso de búsqueda
-        for (LabeledColor colorActual : listaColores) {
-            if (colorActual.getName().equals(nombreColor)) {
-                lc = colorActual;
-            }
-        }
-
-        // Devuelve LabeledColor Encontrado
-        return lc;
     }
 }

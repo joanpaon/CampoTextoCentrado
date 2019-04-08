@@ -23,7 +23,7 @@ import org.japo.java.forms.GUI;
  *
  * @author José A. Pacheco Ondoño - joanpaon@gmail.com
  */
-public class AEM implements ActionListener {
+public final class AEM implements ActionListener {
 
     // Referencia al igu
     private final GUI gui;
@@ -35,7 +35,6 @@ public class AEM implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // LLamar a algún método de GUI
         gui.procesarTexto(e);
     }
 }

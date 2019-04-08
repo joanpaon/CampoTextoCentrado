@@ -1,5 +1,5 @@
 /* 
- * Copyright 2017 José A. Pacheco Ondoño - joanpaon@gmail.com.
+ * Copyright 2019 José A. Pacheco Ondoño - joanpaon@gmail.com.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 package org.japo.java.events;
 
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import org.japo.java.forms.GUI;
 
 /**
  *
  * @author José A. Pacheco Ondoño - joanpaon@gmail.com
  */
-public class MEM extends MouseAdapter {
+public final class MEM extends MouseAdapter {
 
     // Referencia al GUI
     private final GUI gui;
@@ -32,10 +31,4 @@ public class MEM extends MouseAdapter {
     public MEM(GUI gui) {
         this.gui = gui;
     }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-    
 }
