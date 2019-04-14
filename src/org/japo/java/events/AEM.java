@@ -25,7 +25,7 @@ import org.japo.java.forms.GUI;
  */
 public final class AEM implements ActionListener {
 
-    // Referencia al igu
+    // Referencia al GUI
     private final GUI gui;
 
     // Constructor
