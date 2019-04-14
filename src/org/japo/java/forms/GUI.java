@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 José A. Pacheco Ondoño - joanpaon@gmail.com.
+ * Copyright 2019 José A. Pacheco Ondoño - joanpaon@gmail.com.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,32 +34,34 @@ import org.japo.java.libraries.UtilesSwing;
 public final class GUI extends JFrame {
 
     // Propiedades App
-    public static final String PRP_LOOK_AND_FEEL_PROFILE = "form_look_and_feel_profile";
-    public static final String PRP_FAVICON_RESOURCE = "form_favicon_resource";
-    public static final String PRP_FORM_TITLE = "form_title";
+    public static final String PRP_FAVICON_RESOURCE = "favicon_resource";
+    public static final String PRP_FONT_RESOURCE = "font_resource";
     public static final String PRP_FORM_HEIGHT = "form_height";
     public static final String PRP_FORM_WIDTH = "form_width";
-    public static final String PRP_FORM_BACKGROUND_RESOURCE = "form_background_resource";
-    public static final String PRP_FORM_FONT_RESOURCE = "form_font_resource";
+    public static final String PRP_FORM_TITLE = "form_title";
+    public static final String PRP_LOOK_AND_FEEL_PROFILE = "look_and_feel_profile";
 
     // Valores por Defecto
-    public static final String DEF_LOOK_AND_FEEL_PROFILE = UtilesSwing.LNF_WINDOWS_PROFILE;
     public static final String DEF_FAVICON_RESOURCE = "img/favicon.png";
-    public static final String DEF_FORM_TITLE = "Swing Manual App";
+    public static final String DEF_FONT_FALLBACK_NAME = Font.SERIF;
+    public static final String DEF_FONT_SYSTEM_NAME = "Kaufmann BT";
     public static final int DEF_FORM_HEIGHT = 300;
     public static final int DEF_FORM_WIDTH = 500;
-    public static final String DEF_FORM_BACKGROUND_RESOURCE = "img/background.jpg";
-    public static final String DEF_FORM_FONT_RESOURCE = "fonts/default_font.ttf";
+    public static final String DEF_FORM_TITLE = "Swing Manual App";
+    public static final String DEF_LOOK_AND_FEEL_PROFILE = UtilesSwing.LNF_WINDOWS_PROFILE;
 
     // Colores
     private final ArrayList<LabeledColor> COLORES = new ArrayList<>();
 
     // Referencias
     private final Properties prp;
-    
+
     // Componentes
     private JTextField txfColor;
     private JPanel pnlPpal;
+
+    // Fuentes
+    private Font fntColor;
 
     // Constructor
     public GUI(Properties prp) {
@@ -76,16 +78,19 @@ public final class GUI extends JFrame {
         initAfter();
     }
 
-    // Construcción del IGU
+    // Construcción - GUI
     private void initComponents() {
+        // Fuentes
+        fntColor = UtilesSwing.generarFuenteRecurso(
+                prp.getProperty(PRP_FONT_RESOURCE),
+                DEF_FONT_SYSTEM_NAME,
+                DEF_FONT_FALLBACK_NAME);
+
         // Otros componentes
         txfColor = new JTextField();
-        txfColor.setFont(UtilesSwing.importarFuenteRecurso(
-                prp.getProperty(PRP_FORM_FONT_RESOURCE, DEF_FORM_FONT_RESOURCE)).
-                deriveFont(Font.BOLD, 40f));
+        txfColor.setFont(fntColor.deriveFont(Font.BOLD, 40f));
         txfColor.setColumns(10);
         txfColor.setHorizontalAlignment(JTextField.CENTER);
-        txfColor.addActionListener(new AEM(this));
 
         // Panel Principal
         pnlPpal = new JPanel(new GridBagLayout());
@@ -121,6 +126,9 @@ public final class GUI extends JFrame {
         // Establecer Favicon
         UtilesSwing.establecerFavicon(this, prp.getProperty(
                 PRP_FAVICON_RESOURCE, DEF_FAVICON_RESOURCE));
+
+        // Registra los Gestores de Eventos
+        txfColor.addActionListener(new AEM(this));
     }
 
     // Pinta el Panel Principal con el color escrito

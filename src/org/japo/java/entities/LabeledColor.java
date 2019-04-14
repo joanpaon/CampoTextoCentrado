@@ -84,7 +84,7 @@ public final class LabeledColor extends Color {
         }
     }
 
-    // Propiedades > Lista de Colores
+    // Propiedades > Lista ( ArrayList ) de Colores
     public static final void cargarColores(
             Properties prp, ArrayList<LabeledColor> colores) {
         try {
