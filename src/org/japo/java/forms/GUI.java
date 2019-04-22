@@ -143,6 +143,6 @@ public final class GUI extends JFrame {
         LabeledColor lc = LabeledColor.buscarColor(COLORES, color);
 
         // Cambiar Color Panel
-        pnlPpal.setBackground(lc);
+        getContentPane().setBackground(lc);
     }
 }
