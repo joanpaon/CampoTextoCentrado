@@ -65,8 +65,6 @@ public final class GUI extends JFrame {
     private void initComponents() {
         // Campo de Texto de Color
         txfColor = new JTextField();
-        txfColor.setFont(fntColor.deriveFont(Font.BOLD, 40f));
-        txfColor.setColumns(10);
         txfColor.setHorizontalAlignment(JTextField.CENTER);
 
         // Panel Principal
@@ -101,6 +99,10 @@ public final class GUI extends JFrame {
         // Establecer Favicon
         UtilesSwing.establecerFavicon(this, prp.getProperty("img_favicon_resource"));
 
+        // Campo de Texto de Color
+        txfColor.setFont(fntColor.deriveFont(Font.BOLD, 40f));
+        txfColor.setColumns(10);
+        
         // Ventana Principal - Propiedades
         setTitle(prp.getProperty("form_title"));
         int width = Integer.parseInt(prp.getProperty("form_width"));
