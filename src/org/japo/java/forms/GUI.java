@@ -33,23 +33,6 @@ import org.japo.java.libraries.UtilesSwing;
  */
 public final class GUI extends JFrame {
 
-    // Propiedades App
-    public static final String PRP_FAVICON_RESOURCE = "favicon_resource";
-    public static final String PRP_FONT_RESOURCE = "font_resource";
-    public static final String PRP_FORM_HEIGHT = "form_height";
-    public static final String PRP_FORM_WIDTH = "form_width";
-    public static final String PRP_FORM_TITLE = "form_title";
-    public static final String PRP_LOOK_AND_FEEL_PROFILE = "look_and_feel_profile";
-
-    // Valores por Defecto
-    public static final String DEF_FAVICON_RESOURCE = "img/favicon.png";
-    public static final String DEF_FONT_FALLBACK_NAME = Font.SERIF;
-    public static final String DEF_FONT_SYSTEM_NAME = "Kaufmann BT";
-    public static final int DEF_FORM_HEIGHT = 300;
-    public static final int DEF_FORM_WIDTH = 500;
-    public static final String DEF_FORM_TITLE = "Swing Manual App";
-    public static final String DEF_LOOK_AND_FEEL_PROFILE = UtilesSwing.LNF_WINDOWS_PROFILE;
-
     // Colores
     private final ArrayList<LabeledColor> COLORES = new ArrayList<>();
 
@@ -80,59 +63,57 @@ public final class GUI extends JFrame {
 
     // Construcción - GUI
     private void initComponents() {
-        // Fuentes
-        fntColor = UtilesSwing.generarFuenteRecurso(
-                prp.getProperty(PRP_FONT_RESOURCE),
-                DEF_FONT_SYSTEM_NAME,
-                DEF_FONT_FALLBACK_NAME);
-
-        // Otros componentes
+        // Campo de Texto de Color
         txfColor = new JTextField();
         txfColor.setFont(fntColor.deriveFont(Font.BOLD, 40f));
         txfColor.setColumns(10);
         txfColor.setHorizontalAlignment(JTextField.CENTER);
 
         // Panel Principal
-        pnlPpal = new JPanel(new GridBagLayout());
+        pnlPpal.setLayout(new GridBagLayout());
         pnlPpal.add(txfColor);
 
-        // Ventana principal
-        setContentPane(pnlPpal);
-        setTitle(prp.getProperty(PRP_FORM_TITLE, DEF_FORM_TITLE));
-        try {
-            int height = Integer.parseInt(prp.getProperty(PRP_FORM_HEIGHT));
-            int width = Integer.parseInt(prp.getProperty(PRP_FORM_WIDTH));
-            setSize(width, height);
-        } catch (NumberFormatException e) {
-            setSize(DEF_FORM_WIDTH, DEF_FORM_HEIGHT);
-        }
+        // Ventana Principal
         setResizable(false);
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     // Inicialización Anterior    
     private void initBefore() {
         // Establecer LnF
-        UtilesSwing.establecerLnFProfile(prp.getProperty(
-                PRP_LOOK_AND_FEEL_PROFILE, DEF_LOOK_AND_FEEL_PROFILE));
+        UtilesSwing.establecerLnFProfile(prp.getProperty("look_and_feel_profile"));
 
         // Cargar colores
         LabeledColor.cargarColores(prp, COLORES);
+
+        // Fuentes
+        fntColor = UtilesSwing.generarFuenteRecurso(prp.getProperty("font_resource"));
+
+        // Panel Principal
+        pnlPpal = new JPanel();
+
+        // Ventana Principal
+        setContentPane(pnlPpal);
     }
 
     // Inicialización Posterior
     private void initAfter() {
         // Establecer Favicon
-        UtilesSwing.establecerFavicon(this, prp.getProperty(
-                PRP_FAVICON_RESOURCE, DEF_FAVICON_RESOURCE));
+        UtilesSwing.establecerFavicon(this, prp.getProperty("img_favicon_resource"));
+
+        // Ventana Principal - Propiedades
+        setTitle(prp.getProperty("form_title"));
+        int width = Integer.parseInt(prp.getProperty("form_width"));
+        int height = Integer.parseInt(prp.getProperty("form_height"));
+        setSize(width, height);
+        setLocationRelativeTo(null);
 
         // Registra los Gestores de Eventos
         txfColor.addActionListener(new AEM(this));
     }
 
     // Pinta el Panel Principal con el color escrito
-    public void procesarTexto(ActionEvent e) {
+    public void procesarAccion(ActionEvent e) {
         // Generador del evento
         JTextField txfActual = (JTextField) e.getSource();
 
